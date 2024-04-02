@@ -35,3 +35,7 @@ Y_train = scaleY.fit_transform(Y_train)
 Y_test = scaleY.transform(Y_test)
 
 #ANN
+def ANN(Y_train, output, batch,epochs,error) :
+
+classifier = Sequential()
+classifier.add(Dense(input_dimension=1, units = 6, activation="relu", kerne))
