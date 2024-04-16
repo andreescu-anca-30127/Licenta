@@ -28,7 +28,7 @@ print(X_test)
 sc_X = StandardScaler(with_mean=False)
 X_train = sc_X.fit_transform(X_train)
 X_test = sc_X.transform(X_test)
-
+print(X_test)
 #standardizare pe outpuut
 #scaleY = StandardScaler()
 #Y_train = scaleY.fit_transform(Y_train)
@@ -43,15 +43,15 @@ def ANN(Y_train, output, batch, epochs, error):
 
     # The prediction
     yhat = classifier.predict(X_test)
-    bias = classifier.layers[0].get_weights()[1]
-    weights = classifier.layers[0].get_weights()[0]
+    bias = classifier.layers[1].get_weights()[1]
+    weights = classifier.layers[1].get_weights()[0]
     return yhat, bias, weights
 
 
 
 
 
-yhat, bias, weights = ANN(Y_train, output=5, batch=5, epochs=400, error='mse')
+yhat, bias, weights = ANN(Y_train, output=5, batch=5, epochs=1000, error='mse')
 
 #Calcularea erorilor
 mse=np.mean(np.square(Y_test -yhat)) #eroarea medie patratica
