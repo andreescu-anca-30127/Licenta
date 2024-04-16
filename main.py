@@ -34,6 +34,7 @@ print(X_test)
 #Y_train = scaleY.fit_transform(Y_train)
 #Y_test = scaleY.transform(Y_test)
 
+# ANN
 def ANN(Y_train, output, batch, epochs, error):
     classifier = Sequential()
     classifier.add(Dense(input_dim=X_train.shape[1], units=6, activation="relu", kernel_initializer='uniform'))
@@ -46,28 +47,14 @@ def ANN(Y_train, output, batch, epochs, error):
     bias = classifier.layers[1].get_weights()[1]
     weights = classifier.layers[1].get_weights()[0]
     return yhat, bias, weights
-
-
-
-
-
-yhat, bias, weights = ANN(Y_train, output=5, batch=5, epochs=1000, error='mse')
-
-#Calcularea erorilor
-mse=np.mean(np.square(Y_test -yhat)) #eroarea medie patratica
-mae=np.mean(np.abs(Y_test - yhat)) # eroarea medie absoluta
-
-#afisarea erorilor
-print("Mean Squared Error (MSE):", mse)
-print("Mean Absolute Error (MAE):", mae)
-
-#plt.plot(Y_test, 'blue', label = 'real output')
-#plt.plot(yhat,'pink', label ='my output')
-#plt.title('Low grade liomas ')
-#plt.xlabel('month from first imaging study')
-#plt.ylabel('tumor volume[cm^3]')
-#plt.show()
-
+yhat, bias, weights = ANN(Y_train, output=5, batch=5, epochs=250, error='mse')
+#
+# plt.plot(Y_test, 'blue', label = 'real output')
+# plt.plot(yhat,'pink', label ='my output')
+# plt.title('Low grade liomas ')
+# plt.xlabel('month from first imaging study')
+# plt.ylabel('tumor volume[cm^3]')
+# plt.show()
 plt.plot(Y_test[:,0],'red', label = 'real output')
 plt.plot(yhat[:,0],'green', label = 'predicted output')
 plt.title('cred ca primul?')
