@@ -23,17 +23,17 @@ X = hstack([X_transformed, X[:, 1:]])
 #training test and test
 X_train, X_test = train_test_split(X, test_size=0.3, random_state=0)
 Y_train, Y_test = train_test_split(Y, test_size=0.3, random_state=0)
-
+print(X_test)
 # Standardizarea caracteristicilor de intrare direct pe matricea rară X
 sc_X = StandardScaler(with_mean=False)
 X_train = sc_X.fit_transform(X_train)
 X_test = sc_X.transform(X_test)
 
 #standardizare pe outpuut
-scaleY = StandardScaler()
-Y_train = scaleY.fit_transform(Y_train)
-Y_test = scaleY.transform(Y_test)
-print(Y_test)
+#scaleY = StandardScaler()
+#Y_train = scaleY.fit_transform(Y_train)
+#Y_test = scaleY.transform(Y_test)
+
 def ANN(Y_train, output, batch, epochs, error):
     classifier = Sequential()
     classifier.add(Dense(input_dim=X_train.shape[1], units=6, activation="relu", kernel_initializer='uniform'))
@@ -119,7 +119,7 @@ print(np.square(np.subtract(Y_test[:,3],yhat[:,3])).min())
 
 plt.plot(Y_test[:,4],'red',label='real output')
 plt.plot(yhat[:,4],'pink', label = 'predicted output')
-plt.title('coloana  3 cred?')
+plt.title('coloana  5 cred?')
 plt.xlabel('month from first imaging study')
 plt.ylabel('tumor volume[cm^3]')
 plt.legend()
