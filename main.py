@@ -10,12 +10,12 @@ from scipy.sparse import hstack
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.models import Sequential
 
-date = pd.read_excel('C:\licenta\pacienti.xlsx', sheet_name= 'b')
+date = pd.read_excel('C:\licenta\pacienti.xlsx', sheet_name='b')
 X= date.iloc[:, 0:1].values; #input
 Y= date.iloc[:, 1:].values; #output
 
 #encoding months from first imagine study
-
+print(X)
 transformer = make_column_transformer((OneHotEncoder(drop='if_binary'), [0]))
 X_transformed = transformer.fit_transform(X[:, :1])
 X = hstack([X_transformed, X[:, 1:]])
@@ -47,7 +47,7 @@ def ANN(Y_train, output, batch, epochs, error):
     bias = classifier.layers[1].get_weights()[1]
     weights = classifier.layers[1].get_weights()[0]
     return yhat, bias, weights
-yhat, bias, weights = ANN(Y_train, output=5, batch=5, epochs=250, error='mse')
+yhat, bias, weights = ANN(Y_train, output=5, batch=32, epochs=200, error='mse')
 #
 # plt.plot(Y_test, 'blue', label = 'real output')
 # plt.plot(yhat,'pink', label ='my output')
