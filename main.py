@@ -10,7 +10,7 @@ from scipy.sparse import hstack
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.callbacks import EarlyStopping
-
+from tensorflow.keras import regularizers
 # Citirea datelor
 date = pd.read_excel('C:\licenta\pacienti.xlsx', sheet_name='b')
 X = date.iloc[:, 0:1].values.reshape(-1,1)  # input
@@ -58,7 +58,7 @@ def ANN(Y_train, Y_test, output, batch, epochs, error, num_layers, num_neurons):
 
 
 # Apelarea funcției ANN pentru antrenarea rețelei
-yhat, bias, weights = ANN(Y_train, Y_test, output=5, batch=4, epochs=100, error='mse',  num_layers=2, num_neurons=7)
+yhat, bias, weights = ANN(Y_train, Y_test, output=5, batch=5, epochs=100, error='mse',  num_layers=2, num_neurons=7)
 
 # Plot pentru coloana 1
 plt.plot(Y_test[:, 0], 'red', label='Real output')
