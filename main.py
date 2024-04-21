@@ -58,7 +58,7 @@ def ANN(Y_train, Y_test, output, batch, epochs, error, num_layers, num_neurons):
 
 
 # Apelarea funcției ANN pentru antrenarea rețelei
-yhat, bias, weights = ANN(Y_train, Y_test, output=5, batch=5, epochs=100, error='mse',  num_layers=2, num_neurons=7)
+yhat, bias, weights = ANN(Y_train, Y_test, output=5, batch=5, epochs=50, error='mse',  num_layers=2, num_neurons=3)
 
 # Plot pentru coloana 1
 plt.plot(Y_test[:, 0], 'red', label='Real output')
