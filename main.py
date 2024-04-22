@@ -68,35 +68,35 @@ num_neurons_values = [23, 8, 16]  # Numărul de neuroni
 batch_size_values = [4, 8, 32]   # Dimensiunea batch-ului
 epochs_values = [50, 100, 150]    # Numărul de epoci
 
-best_mse = float('inf')
-best_params = {}
-for num_neurons in num_neurons_values:
-    for batch_size in batch_size_values:
-        for epochs in epochs_values:
-            # Antrenarea modelului cu parametrii actuali
-            yhat, _, _ = ANN(Y_train, output=1, batch=batch_size, epochs=epochs, error='mse', num_layers=1,
-                              num_neurons=num_neurons)
-
-            # Calculul erorii pe setul de testare
-            mse = np.square(np.subtract(Y_test, yhat)).mean()
-
-            # Actualizarea celor mai buni parametri și a celei mai mici erori
-            if mse < best_mse:
-                best_mse = mse
-                best_params = {'num_neurons': num_neurons, 'batch_size': batch_size, 'epochs': epochs}
-
-print("Best parameters:", best_params)
-print("Best MSE:", best_mse)
-
-# Evaluarea vizuală
-# plt.plot(Y_test, 'red', label='Real Output')
-# plt.plot(yhat, 'green', label='Predicted Output')
-# plt.title('Model Evaluation')
-# plt.xlabel('Number of samples')
-# plt.ylabel('Measured value')
-# plt.legend()
-# plt.show()
+# best_mse = float('inf')
+# best_params = {}
+# for num_neurons in num_neurons_values:
+#     for batch_size in batch_size_values:
+#         for epochs in epochs_values:
+#             # Antrenarea modelului cu parametrii actuali
+#             yhat, _, _ = ANN(Y_train, output=1, batch=batch_size, epochs=epochs, error='mse', num_layers=1,
+#                               num_neurons=num_neurons)
 #
+#             # Calculul erorii pe setul de testare
+#             mse = np.square(np.subtract(Y_test, yhat)).mean()
+#
+#             # Actualizarea celor mai buni parametri și a celei mai mici erori
+#             if mse < best_mse:
+#                 best_mse = mse
+#                 best_params = {'num_neurons': num_neurons, 'batch_size': batch_size, 'epochs': epochs}
+#
+# print("Best parameters:", best_params)
+# print("Best MSE:", best_mse)
+
+#Evaluarea vizuală
+plt.plot(Y_test, 'red', label='Real Output')
+plt.plot(yhat, 'green', label='Predicted Output')
+plt.title('Model Evaluation')
+plt.xlabel('Number of samples')
+plt.ylabel('Measured value')
+plt.legend()
+plt.show()
+
 # # Calcularea erorilor
 # mse = np.square(np.subtract(Y_test, yhat)).mean()
 # me = np.square(np.subtract(Y_test, yhat)).min()
