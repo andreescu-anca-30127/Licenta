@@ -54,20 +54,20 @@ def ANN(Y_train, output, batch, epochs, error,num_layers,num_neurons):
     # classifier.add(Dense(input_dim=X_train.shape[1], units=23, activation="relu", kernel_initializer='uniform'))
     classifier.add(Dense(output))
     classifier.compile(optimizer='adam', loss=error, metrics=['accuracy'])
-    classifier.fit(X_train, Y_train, batch_size=batch, epochs=epochs)
+    classifier.fit(X_train, Y_train, batch_size=batch, epochs=epochs,validation_split=0.1)
 
     # The prediction
     yhat = classifier.predict(X_test)
     bias = classifier.layers[1].get_weights()[1]
     weights = classifier.layers[1].get_weights()[0]
     return yhat, bias, weights
-yhat, bias, weights = ANN(Y_train, output=1, batch=4, epochs=100, error='mse',num_layers=1,num_neurons=23)
+yhat, bias, weights = ANN(Y_train, output=1, batch=16, epochs=100, error='mse',num_layers=1,num_neurons=23)
 
-# Definirea listelor de valori posibile pentru parametrii căutați
-num_neurons_values = [23, 8, 16]  # Numărul de neuroni
-batch_size_values = [4, 8, 32]   # Dimensiunea batch-ului
-epochs_values = [50, 100, 150]    # Numărul de epoci
-
+# # Definirea listelor de valori posibile pentru parametrii căutați
+# num_neurons_values = [23,25,24]  # Numărul de neuroni
+# batch_size_values = [ 17, 16, 18]   # Dimensiunea batch-ului
+# epochs_values = [100, 150, 200, 300]  # Numărul de epoci
+#
 # best_mse = float('inf')
 # best_params = {}
 # for num_neurons in num_neurons_values:
@@ -97,9 +97,9 @@ plt.ylabel('Measured value')
 plt.legend()
 plt.show()
 
-# # Calcularea erorilor
-# mse = np.square(np.subtract(Y_test, yhat)).mean()
-# me = np.square(np.subtract(Y_test, yhat)).min()
-# # Afisarea erorilor
-# print("Mean Squared Error (MSE):", mse)
-# print("Minimal Error (MAE):", me)
+# Calcularea erorilor
+mse = np.square(np.subtract(Y_test, yhat)).mean()
+me = np.square(np.subtract(Y_test, yhat)).min()
+# Afisarea erorilor
+print("Mean Squared Error (MSE):", mse)
+print("Minimal Error (MAE):", me)
