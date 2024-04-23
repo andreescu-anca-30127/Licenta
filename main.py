@@ -78,8 +78,7 @@ for num_neurons in num_neurons_values:
         for epochs in epochs_values:
             for num_layers in num_layers_values:
                 # Antrenarea modelului cu parametrii actuali
-      yhat, _, _ = ANN(Y_train, output=1, batch=batch_size, epochs=epochs, error='mse', num_layers=num_layers,
-                                  num_neurons=num_neurons)
+                yhat, _, _ = ANN(Y_train, output=1, batch=batch_size, epochs=epochs, error='mse', num_layers=num_layers,num_neurons=num_neurons)
 
                 # Calculul erorii pe setul de testare
                 mse = np.square(np.subtract(Y_test, yhat)).mean()
@@ -88,6 +87,7 @@ for num_neurons in num_neurons_values:
                 if mse < best_mse:
                     best_mse = mse
                     best_params = {'num_neurons': num_neurons, 'batch_size': batch_size, 'epochs': epochs, 'num_layers': num_layers}
+
 
 print("Best parameters:", best_params)
 print("Best MSE:", best_mse)
