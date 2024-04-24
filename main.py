@@ -62,48 +62,49 @@ def ANN(Y_train, output, batch, epochs, error,num_layers,num_neurons):
     bias = classifier.layers[0].get_weights()[1]
     weights = classifier.layers[0].get_weights()[0]
     return yhat, bias, weights
-yhat, bias, weights = ANN(Y_train, output=1, batch=18, epochs=100, error='mse',num_layers=1,num_neurons=23)
+yhat, bias, weights = ANN(Y_train, output=1, batch=25, epochs=100, error='mse',num_layers=1,num_neurons=23)
 
 # Definirea listelor de valori posibile pentru parametrii căutați
-best_mse = float('inf')
-best_params = {}
+# best_mse = float('inf')
+# best_params = {}
+#
+# num_neurons_values = [23, 25, 24, 26]  # Numărul de neuroni
+# batch_size_values = [17, 16, 18, 20, 25, 32, 35, 19, 21, 33]   # Dimensiunea batch-ului
+# epochs_values = [100, 150, 200, 300,  500, 600, 700]  # Numărul de epoci
+# num_layers_values = [1, 2, 3, 4]  # Numărul de straturi ascunse
+#
+# for num_neurons in num_neurons_values:
+#     for batch_size in batch_size_values:
+#         for epochs in epochs_values:
+#             for num_layers in num_layers_values:
+#                 # Antrenarea modelului cu parametrii actuali
+#                 yhat, _, _ = ANN(Y_train, output=1, batch=batch_size, epochs=epochs, error='mse', num_layers=num_layers,num_neurons=num_neurons)
+#
+#                 # Calculul erorii pe setul de testare
+#                 mse = np.square(np.subtract(Y_test, yhat)).mean()
+#
+#                 # Actualizarea celor mai buni parametri și a celei mai mici erori
+#                 if mse < best_mse:
+#                     best_mse = mse
+#                     best_params = {'num_neurons': num_neurons, 'batch_size': batch_size, 'epochs': epochs, 'num_layers': num_layers}
+#
+#
+# print("Best parameters:", best_params)
+# print("Best MSE:", best_mse)
 
-num_neurons_values = [23, 25, 24, 26]  # Numărul de neuroni
-batch_size_values = [17, 16, 18, 20, 25, 32, 35, 19, 21, 33]   # Dimensiunea batch-ului
-epochs_values = [100, 150, 200, 300,  500, 600, 700]  # Numărul de epoci
-num_layers_values = [1, 2, 3, 4]  # Numărul de straturi ascunse
-
-for num_neurons in num_neurons_values:
-    for batch_size in batch_size_values:
-        for epochs in epochs_values:
-            for num_layers in num_layers_values:
-                # Antrenarea modelului cu parametrii actuali
-                yhat, _, _ = ANN(Y_train, output=1, batch=batch_size, epochs=epochs, error='mse', num_layers=num_layers,num_neurons=num_neurons)
-
-                # Calculul erorii pe setul de testare
-                mse = np.square(np.subtract(Y_test, yhat)).mean()
-
-                # Actualizarea celor mai buni parametri și a celei mai mici erori
-                if mse < best_mse:
-                    best_mse = mse
-                    best_params = {'num_neurons': num_neurons, 'batch_size': batch_size, 'epochs': epochs, 'num_layers': num_layers}
+# Evaluarea vizuală
+plt.plot(Y_test, 'red', label='Real Output')
+plt.plot(yhat, 'green', label='Predicted Output')
+plt.title('Model Evaluation')
+plt.xlabel('Number of samples')
+plt.ylabel('Measured value')
+plt.legend()
+plt.show()
 
 
-print("Best parameters:", best_params)
-print("Best MSE:", best_mse)
-
-# #Evaluarea vizuală
-# plt.plot(Y_test, 'red', label='Real Output')
-# plt.plot(yhat, 'green', label='Predicted Output')
-# plt.title('Model Evaluation')
-# plt.xlabel('Number of samples')
-# plt.ylabel('Measured value')
-# plt.legend()
-# plt.show()
-
-# # Calcularea erorilor
-# mse = np.square(np.subtract(Y_test, yhat)).mean()
-# me = np.square(np.subtract(Y_test, yhat)).min()
-# # Afisarea erorilor
-# print("Mean Squared Error (MSE):", mse)
-# print("Minimal Error (MAE):", me)
+# Calcularea erorilor
+mse = np.square(np.subtract(Y_test, yhat)).mean()
+me = np.square(np.subtract(Y_test, yhat)).min()
+# Afisarea erorilor
+print("Mean Squared Error (MSE):", mse)
+print("Minimal Error (MAE):", me)
