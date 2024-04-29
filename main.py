@@ -14,6 +14,8 @@ from tensorflow.keras import regularizers
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.layers import Dropout
 from ucimlrepo import fetch_ucirepo
+from sklearn.preprocessing import MinMaxScaler
+
 breast_cancer_wisconsin_prognostic = fetch_ucirepo(id=16)
 # data (as pandas dataframes)
 X = breast_cancer_wisconsin_prognostic.data.features
@@ -35,8 +37,12 @@ print(output)
 # Separarea datelor în seturi de antrenare și de test
 X_train, X_test, Y_train, Y_test = train_test_split(input, output, test_size=0.3, random_state=0)
 
-# Standardizarea caracteristicilor de intrare
-sc_X = StandardScaler()
+# # Standardizarea caracteristicilor de intrare
+# sc_X = StandardScaler()
+# X_train = sc_X.fit_transform(X_train)
+# X_test = sc_X.transform(X_test)
+# Normalizarea caracteristicilor de intrare
+sc_X = MinMaxScaler()
 X_train = sc_X.fit_transform(X_train)
 X_test = sc_X.transform(X_test)
 
