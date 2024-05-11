@@ -113,25 +113,30 @@ def ANN(Y_train, output, batch, epochs, error,num_layers,num_neurons,num_neurons
 def find_best_params(X_train, Y_train, X_test, Y_test, num_neurons_values, batch_size_values, epochs_values, num_layers_values, num_neurons_per_layer_values):
     best_mse = float('inf')
     best_params = {}
+    mse_results = {}
 
     for num_neurons in num_neurons_values:
         for batch_size in batch_size_values:
             for epochs in epochs_values:
                 for num_layers in num_layers_values:
                     for num_neurons_per_layer in num_neurons_per_layer_values:
-                        # Training the model with the current parameters
-                        _, yhat, _, _ = ANN(Y_train, output=1, batch=batch_size, epochs=epochs, error='mse', num_layers=num_layers, num_neurons=num_neurons, num_neurons_per_layer=num_neurons_per_layer)
+                        # Check if the number of neurons per layer sequence matches the number of layers
+                        if len(num_neurons_per_layer) == num_layers:
+                            # Training the model with the current parameters
+                            _, yhat, _, _ = ANN(Y_train, output=1, batch=batch_size, epochs=epochs, error='mse', num_layers=num_layers, num_neurons=num_neurons, num_neurons_per_layer=num_neurons_per_layer)
 
-                        # Calculating the error on the test set
-                        mse = np.square(np.subtract(Y_test, yhat)).mean()
+                            # Calculating the error on the test set
+                            mse = np.square(np.subtract(Y_test, yhat)).mean()
 
-                        # Updating the best parameters and the lowest error
-                        if mse < best_mse:
-                            best_mse = mse
-                            best_params = {'num_neurons': num_neurons, 'batch_size': batch_size, 'epochs': epochs, 'num_layers': num_layers, 'num_neurons_per_layer': num_neurons_per_layer}
+                            # Updating the best parameters and the lowest error
+                            if mse < best_mse:
+                                best_mse = mse
+                                best_params = {'num_neurons': num_neurons, 'batch_size': batch_size, 'epochs': epochs, 'num_layers': num_layers, 'num_neurons_per_layer': num_neurons_per_layer}
 
-    return best_params, best_mse
+                            # Store the MSE result for the current parameters
+                            mse_results[(num_neurons, batch_size, epochs, num_layers, tuple(num_neurons_per_layer))] = mse
 
+    return best_params, best_mse, mse_results
 
 # Define the ranges for the parameters
 num_neurons_values = [21,22,23,24,26]  # Number of neurons for the first hidden layer
@@ -141,12 +146,15 @@ epochs_values = [50, 100, 150, 200, 300, 500, 700]    # Number of epochs
 num_layers_values = [1, 2, 3]  # Number of hidden layers
 
 # Find the best parameters
-best_params, best_mse = find_best_params(X_train, Y_train, X_test, Y_test, num_neurons_values, batch_size_values, epochs_values, num_layers_values, num_neurons_per_layer_values)
+best_params, best_mse, mse_results = find_best_params(X_train, Y_train, X_test, Y_test, num_neurons_values, batch_size_values, epochs_values, num_layers_values, num_neurons_per_layer_values)
 
 print("Best parameters:", best_params)
 print("Best MSE:", best_mse)
-# yhat, bias, weights = ANN(Y_train, output=1, batch=3, epochs=250, error='mse',num_layers=1,num_neurons=22)
 
+# Save the MSE results to a file
+with open('mse_results.txt', 'w') as file:
+    for params, mse in mse_results.items():
+        file.write(f"{params}: {mse}\n")
 
 # # Definirea listelor de valori posibile pentru parametrii căutați
 # best_mse = float('inf')
