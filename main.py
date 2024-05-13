@@ -21,7 +21,7 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.metrics import mean_squared_error
 from ucimlrepo import fetch_ucirepo
-
+from tensorflow.keras.optimizers import RMSprop
 # fetch dataset
 breast_cancer_wisconsin_prognostic = fetch_ucirepo(id=16)
 # data (as pandas dataframes)
@@ -52,7 +52,17 @@ Y_test= Y_test.reshape(-1,1)
 # sc_X = StandardScaler()
 # X_train = sc_X.fit_transform(X_train)
 # X_test = sc_X.transform(X_test)
+from sklearn.preprocessing import RobustScaler
 
+# # Normalizarea caracteristicilor de intrare
+# sc_X = RobustScaler()
+# X_train = sc_X.fit_transform(X_train)
+# X_test = sc_X.transform(X_test)
+#
+# # Normalizarea caracteristicilor de ieșire
+# sc_Y = RobustScaler()
+# Y_train = sc_Y.fit_transform(Y_train)
+# Y_test = sc_Y.transform(Y_test)
 # Normalizarea caracteristicilor de intrare
 sc_X = MinMaxScaler()
 X_train = sc_X.fit_transform(X_train)
@@ -64,54 +74,48 @@ Y_train = sc_Y.fit_transform(Y_train)
 Y_test = sc_Y.transform(Y_test)
 
 # Crearea rețelei neuronale
-def ANN(Y_train, output, batch, epochs, error,num_layers,num_neurons,num_neurons_per_layer=None):
-        classifier = Sequential()
-        # Adăugarea straturilor ascunse
-        # for i in range(num_layers):
-        #     # Primul strat ascuns trebuie să aibă dimensiunea de intrare specificată
-        #     if i == 0:
-        #         classifier.add(Dense(input_dim= 30, units=num_neurons, activation="relu", kernel_initializer="uniform"))
-        #     else:
-        #         classifier.add(Dense(units=num_neurons, activation="relu", kernel_initializer="uniform"))
-        # Adăugarea straturilor ascunse
-        if num_neurons_per_layer is None:
-            for i in range(num_layers):
-                if i == 0:
-                    classifier.add(
-                        Dense(input_dim=30, units=num_neurons, activation="relu", kernel_initializer="uniform"))
-                else:
-                    classifier.add(Dense(units=num_neurons, activation="relu", kernel_initializer="uniform"))
-        else:
-            for neurons in num_neurons_per_layer:
-                classifier.add(Dense(units=neurons, activation="relu", kernel_initializer="uniform"))
+def ANN(Y_train, output, batch, epochs, error, num_layers, num_neurons, num_neurons_per_layer=None, regularization_strength=0.05):
+    classifier = Sequential()
+    # Adăugarea straturilor ascunse
+    if num_neurons_per_layer is None:
+        for i in range(num_layers):
+            if i == 0:
+                classifier.add(Dense(input_dim=30, units=num_neurons, activation="relu", kernel_initializer="uniform"))
+            else:
+                classifier.add(Dense(units=num_neurons, activation="relu", kernel_initializer="uniform"))
+    else:
+        for neurons in num_neurons_per_layer:
+            classifier.add(Dense(units=neurons, activation="relu", kernel_initializer="uniform"))
 
-        classifier.add(Dense(output))
-        # classifier.summary()
-        create_optimizer = Adam(learning_rate=0.05e-4, epsilon=1e-8)
-        classifier.compile(optimizer=create_optimizer, loss=error, metrics=['accuracy'])
-        history = classifier.fit(X_train, Y_train, batch_size=batch, epochs=epochs, validation_split=0.1)
+    classifier.add(Dense(output))
+    # classifier.summary()
+    create_optimizer = Adam(learning_rate=0.04e-05, epsilon=1e-8)
+    # create_optimizer = RMSprop(learning_rate=0.05e-4, epsilon=1e-8)
+    classifier.compile(optimizer=create_optimizer, loss=error, metrics=['accuracy'])
+    history = classifier.fit(X_train, Y_train, batch_size=batch, epochs=epochs, validation_split=0.1)
 
-        # the prediction on the test data
-        yhat = classifier.predict(X_test)
-        bias = classifier.layers[0].get_weights()[1]
-        weights = classifier.layers[0].get_weights()[0]
-        # Construirea modelului pentru a afișa sumarul
-        classifier.build((None, 2))
+    # the prediction on the test data
+    yhat = classifier.predict(X_test)
+    bias = classifier.layers[0].get_weights()[1]
+    weights = classifier.layers[0].get_weights()[0]
+    # Construirea modelului pentru a afișa sumarul
+    classifier.build((None, 2))
 
-        # Afisarea sumarului
-        classifier.summary()
-        # Trasarea graficului pentru pierdere
-        plt.plot(history.history['loss'], label='train')
-        plt.plot(history.history['val_loss'], label='validation')
-        plt.title('Model Loss')
-        plt.ylabel('Loss')
-        plt.xlabel('Epoch')
-        plt.legend()
-        plt.show()
-        # The prediction
+    # Afisarea sumarului
+    classifier.summary()
+    # Trasarea graficului pentru pierdere
+    plt.plot(history.history['loss'], label='train')
+    plt.plot(history.history['val_loss'], label='validation')
+    plt.title('Model Loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.legend()
+    plt.show()
+    # The prediction
 
-        return classifier, yhat, bias, weights, history
-classifier, yhat, bias, weights, history = ANN(Y_train, output=1, batch=5, epochs=200,error='mse', num_layers=1, num_neurons=21)
+    return classifier, yhat, bias, weights, history
+
+classifier, yhat, bias, weights, history = ANN(Y_train, output=1, batch=5, epochs=350,error='mse', num_layers=1, num_neurons=22, num_neurons_per_layer=[21])
 
 
 # Evaluarea vizuală relu
