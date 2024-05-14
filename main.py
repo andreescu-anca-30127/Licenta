@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, KFold
 from sklearn.preprocessing import StandardScaler
 from sklearn.compose import make_column_transformer
 from scipy.sparse import hstack
@@ -27,110 +27,174 @@ breast_cancer_wisconsin_prognostic = fetch_ucirepo(id=16)
 # data (as pandas dataframes)
 X = breast_cancer_wisconsin_prognostic.data.features
 y = breast_cancer_wisconsin_prognostic.data.targets
-print(X)
-print(y)
+# print(X)
+# print(y)
 # metadata
-print(breast_cancer_wisconsin_prognostic.metadata)
-
-# variable information
-print(breast_cancer_wisconsin_prognostic.variables)
+# print(breast_cancer_wisconsin_prognostic.metadata)
+#
+# # variable information
+# print(breast_cancer_wisconsin_prognostic.variables)
 
  # Citirea datelor
-input =X.iloc[:,1:31].values # input
-print(input)
-output=X.iloc[:,31:32].values
-print(output)
+Y=X.iloc[:,31:32].values
+X =X.iloc[:,0:31].values # input
+print(X)
+
+print(Y)
+def kfold_cross_validation(X, Y, num_folds=5, epochs=200, batch_size=5, num_layers=1, num_neurons=21, learning_rate=0.5e-4, epsilon=1e-08):
+    kf = KFold(n_splits=num_folds)
+    mse_scores = []
+    mae_scores = []
+
+    for train_index, test_index in kf.split(X):
+        X_train, X_val = X[train_index], X[test_index]
+        Y_train, Y_val = Y[train_index], Y[test_index]
+
+        # Redimensionare datele pentru Y_train într-o matrice 2D
+        Y_train = Y_train.reshape(-1, 1)
+
+        # Redimensionare datele pentru Y_val într-o matrice 2D
+        Y_val = Y_val.reshape(-1, 1)
+
+        # Feature scaling
+        scaler = MinMaxScaler()
+        X_train_scaled = scaler.fit_transform(X_train)
+        X_val_scaled = scaler.transform(X_val)
+
+        scaler2 = MinMaxScaler()
+        Y_train_scaled = scaler2.fit_transform(Y_train)
+        Y_val_scaled = scaler2.transform(Y_val)
+
+        # Antrenare model
+        classifier = Sequential()
+        for i in range(num_layers):
+            if i == 0:
+                classifier.add(Dense(input_dim=31, units=num_neurons, activation="relu", kernel_initializer="uniform"))
+            else:
+                classifier.add(Dense(units=num_neurons, activation="relu", kernel_initializer="uniform"))
+        classifier.add(Dense(1))
+        classifier.compile(optimizer=Adam(learning_rate=learning_rate, epsilon=epsilon), loss='mse', metrics=['accuracy'])
+        history = classifier.fit(X_train_scaled, Y_train_scaled, batch_size=batch_size, epochs=epochs, validation_split=0.1, verbose=0)
+
+        # Evaluare pe datele de validare
+        yhat = classifier.predict(X_val_scaled)
+
+        # Calcularea erorilor
+        mse = np.square(np.subtract(Y_val_scaled, yhat)).mean()
+        mae = np.mean(np.abs(Y_val_scaled - yhat))
+
+        # Adăugarea scorurilor la listele corespunzătoare
+        mse_scores.append(mse)
+        mae_scores.append(mae)
+
+    # Calcularea mediei scorurilor
+    avg_mse = np.mean(mse_scores)
+    avg_mae = np.mean(mae_scores)
+
+    return avg_mse, avg_mae
+
+# Apelarea funcției pentru kfold cross validation
+avg_mse, avg_mae = kfold_cross_validation(X, Y)
+
+# Afișarea scorurilor medii
+print("Average Mean Squared Error (MSE) across folds:", avg_mse)
+print("Average Mean Absolute Error (MAE) across folds:", avg_mae)
+
+
 #print(X.iloc[:,0].values)
-# Separarea datelor în seturi de antrenare și de test
-X_train, X_test, Y_train, Y_test = train_test_split(input, output, test_size=0.3, random_state=0)
-#reshape
-Y_train = Y_train.reshape(-1,1)
-# realizare matrice 2d pentru outptu deoarece am outptu numa pe o coloana
-Y_test= Y_test.reshape(-1,1)
 
-# # Standardizarea caracteristicilor de intrare
-# sc_X = StandardScaler()
-# X_train = sc_X.fit_transform(X_train)
-# X_test = sc_X.transform(X_test)
-from sklearn.preprocessing import RobustScaler
 
+
+# # Separarea datelor în seturi de antrenare și de test
+# X_train, X_test, Y_train, Y_test = train_test_split(input, output, test_size=0.3, random_state=0)
+# #reshape
+# # Y_train = Y_train.reshape(-1,1)
+# # realizare matrice 2d pentru outptu deoarece am outptu numa pe o coloana
+# # Y_test= Y_test.reshape(-1,1)
+#
+# # # Standardizarea caracteristicilor de intrare
+# # sc_X = StandardScaler()
+# # X_train = sc_X.fit_transform(X_train)
+# # X_test = sc_X.transform(X_test)
+# from sklearn.preprocessing import RobustScaler
+#
+# # # Normalizarea caracteristicilor de intrare
+# # sc_X = RobustScaler()
+# # X_train = sc_X.fit_transform(X_train)
+# # X_test = sc_X.transform(X_test)
+# #
+# # # Normalizarea caracteristicilor de ieșire
+# # sc_Y = RobustScaler()
+# # Y_train = sc_Y.fit_transform(Y_train)
+# # Y_test = sc_Y.transform(Y_test)
 # # Normalizarea caracteristicilor de intrare
-# sc_X = RobustScaler()
+# sc_X = MinMaxScaler()
 # X_train = sc_X.fit_transform(X_train)
 # X_test = sc_X.transform(X_test)
 #
-# # Normalizarea caracteristicilor de ieșire
-# sc_Y = RobustScaler()
+# #normalizare pe  iesire
+# sc_Y= MinMaxScaler()
 # Y_train = sc_Y.fit_transform(Y_train)
 # Y_test = sc_Y.transform(Y_test)
-# Normalizarea caracteristicilor de intrare
-sc_X = MinMaxScaler()
-X_train = sc_X.fit_transform(X_train)
-X_test = sc_X.transform(X_test)
-
-#normalizare pe  iesire
-sc_Y= MinMaxScaler()
-Y_train = sc_Y.fit_transform(Y_train)
-Y_test = sc_Y.transform(Y_test)
-
-# Crearea rețelei neuronale
-def ANN(Y_train, output, batch, epochs, error, num_layers, num_neurons, num_neurons_per_layer=None, regularization_strength=0.05):
-    classifier = Sequential()
-    # Adăugarea straturilor ascunse
-    if num_neurons_per_layer is None:
-        for i in range(num_layers):
-            if i == 0:
-                classifier.add(Dense(input_dim=30, units=num_neurons, activation="relu", kernel_initializer="uniform"))
-            else:
-                classifier.add(Dense(units=num_neurons, activation="relu", kernel_initializer="uniform"))
-    else:
-        for neurons in num_neurons_per_layer:
-            classifier.add(Dense(units=neurons, activation="relu", kernel_initializer="uniform"))
-
-    classifier.add(Dense(output))
-    # classifier.summary()
-    create_optimizer = Adam(learning_rate=0.04e-05, epsilon=1e-8)
-    # create_optimizer = RMSprop(learning_rate=0.05e-4, epsilon=1e-8)
-    classifier.compile(optimizer=create_optimizer, loss=error, metrics=['accuracy'])
-    history = classifier.fit(X_train, Y_train, batch_size=batch, epochs=epochs, validation_split=0.1)
-
-    # the prediction on the test data
-    yhat = classifier.predict(X_test)
-    bias = classifier.layers[0].get_weights()[1]
-    weights = classifier.layers[0].get_weights()[0]
-    # Construirea modelului pentru a afișa sumarul
-    classifier.build((None, 2))
-
-    # Afisarea sumarului
-    classifier.summary()
-    # Trasarea graficului pentru pierdere
-    plt.plot(history.history['loss'], label='train')
-    plt.plot(history.history['val_loss'], label='validation')
-    plt.title('Model Loss')
-    plt.ylabel('Loss')
-    plt.xlabel('Epoch')
-    plt.legend()
-    plt.show()
-    # The prediction
-
-    return classifier, yhat, bias, weights, history
-
-classifier, yhat, bias, weights, history = ANN(Y_train, output=1, batch=5, epochs=350,error='mse', num_layers=1, num_neurons=22, num_neurons_per_layer=[21])
-
-
-# Evaluarea vizuală relu
-plt.plot(Y_test, 'red', label='Real Output')
-plt.plot(yhat, 'green', label='Predicted Output')
-plt.title('Model Evaluation relu')
-plt.xlabel('Number of samples')
-plt.ylabel('Measured value')
-plt.legend()
-plt.show()
-
-# Calcularea erorilor relu
-mserelu = np.square(np.subtract(Y_test, yhat)).mean()
-merelu = np.square(np.subtract(Y_test, yhat)).min()
-# Afisarea erorilor
-print("Mean Squared Error (MSE) relu:", mserelu)
-print("Minimal Error (MAE) relu:", merelu)
-
+#
+# # Crearea rețelei neuronale
+# def ANN(Y_train, output, batch, epochs, error, num_layers, num_neurons, num_neurons_per_layer=None, regularization_strength=0.05):
+#     classifier = Sequential()
+#     # Adăugarea straturilor ascunse
+#     if num_neurons_per_layer is None:
+#         for i in range(num_layers):
+#             if i == 0:
+#                 classifier.add(Dense(input_dim=31, units=num_neurons, activation="relu", kernel_initializer="uniform"))
+#             else:
+#                 classifier.add(Dense(units=num_neurons, activation="relu", kernel_initializer="uniform"))
+#     else:
+#         for neurons in num_neurons_per_layer:
+#             classifier.add(Dense(units=neurons, activation="relu", kernel_initializer="uniform"))
+#
+#     classifier.add(Dense(output))
+#     # classifier.summary()
+#     create_optimizer = Adam(learning_rate=0.05e-04, epsilon=1e-8)
+#     # create_optimizer = RMSprop(learning_rate=0.05e-4, epsilon=1e-8)
+#     classifier.compile(optimizer=create_optimizer, loss=error, metrics=['accuracy'])
+#     history = classifier.fit(X_train, Y_train, batch_size=batch, epochs=epochs, validation_split=0.1)
+#
+#     # the prediction on the test data
+#     yhat = classifier.predict(X_test)
+#     bias = classifier.layers[0].get_weights()[1]
+#     weights = classifier.layers[0].get_weights()[0]
+#     # Construirea modelului pentru a afișa sumarul
+#     classifier.build((None, 2))
+#
+#     # Afisarea sumarului
+#     classifier.summary()
+#     # Trasarea graficului pentru pierdere
+#     plt.plot(history.history['loss'], label='train')
+#     plt.plot(history.history['val_loss'], label='validation')
+#     plt.title('Model Loss')
+#     plt.ylabel('Loss')
+#     plt.xlabel('Epoch')
+#     plt.legend()
+#     plt.show()
+#     # The prediction
+#
+#     return classifier, yhat, bias, weights, history
+#
+# classifier, yhat, bias, weights, history = ANN(Y_train, output=1, batch=5, epochs=200,error='mse', num_layers=1, num_neurons=22, num_neurons_per_layer=[21])
+#
+#
+# # Evaluarea vizuală relu
+# plt.plot(Y_test, 'red', label='Real Output')
+# plt.plot(yhat, 'green', label='Predicted Output')
+# plt.title('Model Evaluation relu')
+# plt.xlabel('Number of samples')
+# plt.ylabel('Measured value')
+# plt.legend()
+# plt.show()
+#
+# # Calcularea erorilor relu
+# mserelu = np.square(np.subtract(Y_test, yhat)).mean()
+# merelu = np.square(np.subtract(Y_test, yhat)).min()
+# # Afisarea erorilor
+# print("Mean Squared Error (MSE) relu:", mserelu)
+# print("Minimal Error (MAE) relu:", merelu)
+#
