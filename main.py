@@ -106,7 +106,7 @@ print(output)
 
 
 # Separarea datelor în seturi de antrenare și de test
-X_train, X_test, Y_train, Y_test = train_test_split(input, output, test_size=0.2, random_state=42)
+X_train, X_test, Y_train, Y_test = train_test_split(input, output, test_size=0.2, random_state=0)
 #reshape
 Y_train = Y_train.reshape(-1,1)
 # realizare matrice 2d pentru outptu deoarece am outptu numa pe o coloana
@@ -224,10 +224,10 @@ print("Best parameters:", best_params)
 print("Best MSE:", best_mse)
 
 # Save the MSE results to a file
-with open('mse_results0.2.txt', 'w') as file:
+with open('mse_results0.2randomstate0.txt', 'w') as file:
     for params, mse in mse_results.items():
         file.write(f"{params}: {mse}\n")
-
+ 
 
 
 # # Evaluarea vizuală relu
