@@ -136,6 +136,24 @@ X_test = sc_X.transform(X_test)
 sc_Y= MinMaxScaler()
 Y_train = sc_Y.fit_transform(Y_train)
 Y_test = sc_Y.transform(Y_test)
+# tree_regressor = DecisionTreeRegressor(random_state=0)
+# tree_regressor.fit(X_train, Y_train)
+#
+# # Realizarea predicțiilor pe setul de test
+# y_pred = tree_regressor.predict(X_test)
+#
+# # Evaluarea vizuală
+# plt.plot(Y_test, 'red', label='Real Output')
+# plt.plot(y_pred, 'green', label='Predicted Output')
+# plt.title('Model Evaluation - Decision Tree')
+# plt.xlabel('Number of samples')
+# plt.ylabel('Measured value')
+# plt.legend()
+# plt.show()
+
+# # Calcularea erorilor
+# mse_dt = mean_squared_error(Y_test, y_pred)
+# print("Mean Squared Error (MSE) - Decision Tree:", mse_dt)
 
 # Crearea rețelei neuronale
 def ANN(Y_train, output, batch, epochs, error, num_layers, num_neurons, num_neurons_per_layer=None):
@@ -180,56 +198,56 @@ def ANN(Y_train, output, batch, epochs, error, num_layers, num_neurons, num_neur
     return classifier, yhat, bias, weights
 
 classifier, yhat, bias, weights = ANN(Y_train, output=1, batch=16, epochs=250,error='mse', num_layers=1, num_neurons=23, num_neurons_per_layer=[22])
-
-
-# def find_best_params(X_train, Y_train, X_test, Y_test, num_neurons_values, batch_size_values, epochs_values, num_layers_values, num_neurons_per_layer_values):
-#     best_mse = float('inf')
-#     best_params = {}
-#     mse_results = {}
 #
-#     for num_neurons in num_neurons_values:
-#         for batch_size in batch_size_values:
-#             for epochs in epochs_values:
-#                 for num_layers in num_layers_values:
-#                     for num_neurons_per_layer in num_neurons_per_layer_values:
-#                         # Check if the number of neurons per layer sequence matches the number of layers
-#                         if len(num_neurons_per_layer) == num_layers:
-#                             # Training the model with the current parameters
-#                             _, yhat, _, _ = ANN(Y_train, output=1, batch=batch_size, epochs=epochs, error='mse', num_layers=num_layers, num_neurons=num_neurons, num_neurons_per_layer=num_neurons_per_layer)
 #
-#                             # Calculating the error on the test set
-#                             mse = np.square(np.subtract(Y_test, yhat)).mean()
+# # def find_best_params(X_train, Y_train, X_test, Y_test, num_neurons_values, batch_size_values, epochs_values, num_layers_values, num_neurons_per_layer_values):
+# #     best_mse = float('inf')
+# #     best_params = {}
+# #     mse_results = {}
+# #
+# #     for num_neurons in num_neurons_values:
+# #         for batch_size in batch_size_values:
+# #             for epochs in epochs_values:
+# #                 for num_layers in num_layers_values:
+# #                     for num_neurons_per_layer in num_neurons_per_layer_values:
+# #                         # Check if the number of neurons per layer sequence matches the number of layers
+# #                         if len(num_neurons_per_layer) == num_layers:
+# #                             # Training the model with the current parameters
+# #                             _, yhat, _, _ = ANN(Y_train, output=1, batch=batch_size, epochs=epochs, error='mse', num_layers=num_layers, num_neurons=num_neurons, num_neurons_per_layer=num_neurons_per_layer)
+# #
+# #                             # Calculating the error on the test set
+# #                             mse = np.square(np.subtract(Y_test, yhat)).mean()
+# #
+# #                             # Updating the best parameters and the lowest error
+# #                             if mse < best_mse:
+# #                                 best_mse = mse
+# #                                 best_params = {'num_neurons': num_neurons, 'batch_size': batch_size, 'epochs': epochs, 'num_layers': num_layers, 'num_neurons_per_layer': num_neurons_per_layer}
+# #
+# #                             # Store the MSE result for the current parameters
+# #                             mse_results[(num_neurons, batch_size, epochs, num_layers, tuple(num_neurons_per_layer))] = mse
+# #
+# #     return best_params, best_mse, mse_results
+# #
+# # # Define the ranges for the parameters
+# # num_neurons_values = [21,22,23,24,26]  # Number of neurons for the first hidden layer
+# # num_neurons_per_layer_values = [[21], [22], [23], [24], [26], [21,23], [21,22], [22,24]]  # Number of neurons per hidden layer
+# # batch_size_values = [3, 5, 8, 16, 32]   # Batch size
+# # epochs_values = [50, 100, 150, 200, 250, 300]    # Number of epochs
+# # num_layers_values = [1, 2]  # Number of hidden layers
+# #
+# # # Find the best parameters
+# # best_params, best_mse, mse_results = find_best_params(X_train, Y_train, X_test, Y_test, num_neurons_values, batch_size_values, epochs_values, num_layers_values, num_neurons_per_layer_values)
+# #
+# # print("Best parameters:", best_params)
+# # print("Best MSE:", best_mse)
+# #
+# # # Save the MSE results to a file
+# # with open('mse_results0.2randomstate0.txt', 'w') as file:
+# #     for params, mse in mse_results.items():
+# #         file.write(f"{params}: {mse}\n")
 #
-#                             # Updating the best parameters and the lowest error
-#                             if mse < best_mse:
-#                                 best_mse = mse
-#                                 best_params = {'num_neurons': num_neurons, 'batch_size': batch_size, 'epochs': epochs, 'num_layers': num_layers, 'num_neurons_per_layer': num_neurons_per_layer}
 #
-#                             # Store the MSE result for the current parameters
-#                             mse_results[(num_neurons, batch_size, epochs, num_layers, tuple(num_neurons_per_layer))] = mse
 #
-#     return best_params, best_mse, mse_results
-#
-# # Define the ranges for the parameters
-# num_neurons_values = [21,22,23,24,26]  # Number of neurons for the first hidden layer
-# num_neurons_per_layer_values = [[21], [22], [23], [24], [26], [21,23], [21,22], [22,24]]  # Number of neurons per hidden layer
-# batch_size_values = [3, 5, 8, 16, 32]   # Batch size
-# epochs_values = [50, 100, 150, 200, 250, 300]    # Number of epochs
-# num_layers_values = [1, 2]  # Number of hidden layers
-#
-# # Find the best parameters
-# best_params, best_mse, mse_results = find_best_params(X_train, Y_train, X_test, Y_test, num_neurons_values, batch_size_values, epochs_values, num_layers_values, num_neurons_per_layer_values)
-#
-# print("Best parameters:", best_params)
-# print("Best MSE:", best_mse)
-#
-# # Save the MSE results to a file
-# with open('mse_results0.2randomstate0.txt', 'w') as file:
-#     for params, mse in mse_results.items():
-#         file.write(f"{params}: {mse}\n")
- 
-
-
 # Evaluarea vizuală relu
 plt.plot(Y_test, 'red', label='Real Output')
 plt.plot(yhat, 'green', label='Predicted Output')
