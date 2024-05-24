@@ -1,0 +1,60 @@
+//cod k-fold
+# def kfold_cross_validation(X, Y, num_folds=5, epochs=200, batch_size=5, num_layers=1, num_neurons=21, learning_rate=0.5e-4, epsilon=1e-08):
+#     kf = KFold(n_splits=num_folds)
+#     mse_scores = []
+#     mae_scores = []
+#
+#     for train_index, test_index in kf.split(X):
+#         X_train, X_val = X[train_index], X[test_index]
+#         Y_train, Y_val = Y[train_index], Y[test_index]
+#
+#         # Redimensionare datele pentru Y_train într-o matrice 2D
+#         Y_train = Y_train.reshape(-1, 1)
+#
+#         # Redimensionare datele pentru Y_val într-o matrice 2D
+#         Y_val = Y_val.reshape(-1, 1)
+#
+#         # Feature scaling
+#         scaler = MinMaxScaler()
+#         X_train_scaled = scaler.fit_transform(X_train)
+#         X_val_scaled = scaler.transform(X_val)
+#
+#         scaler2 = MinMaxScaler()
+#         Y_train_scaled = scaler2.fit_transform(Y_train)
+#         Y_val_scaled = scaler2.transform(Y_val)
+#
+#         # Antrenare model
+#         classifier = Sequential()
+#         for i in range(num_layers):
+#             if i == 0:
+#                 classifier.add(Dense(input_dim=31, units=num_neurons, activation="relu", kernel_initializer="uniform"))
+#             else:
+#                 classifier.add(Dense(units=num_neurons, activation="relu", kernel_initializer="uniform"))
+#         classifier.add(Dense(1))
+#         classifier.compile(optimizer=Adam(learning_rate=learning_rate, epsilon=epsilon), loss='mse', metrics=['accuracy'])
+#         history = classifier.fit(X_train_scaled, Y_train_scaled, batch_size=batch_size, epochs=epochs, validation_split=0.1, verbose=0)
+#
+#         # Evaluare pe datele de validare
+#         yhat = classifier.predict(X_val_scaled)
+#
+#         # Calcularea erorilor
+#         mse = np.square(np.subtract(Y_val_scaled, yhat)).mean()
+#         mae = np.mean(np.abs(Y_val_scaled - yhat))
+#
+#         # Adăugarea scorurilor la listele corespunzătoare
+#         mse_scores.append(mse)
+#         mae_scores.append(mae)
+#
+#     # Calcularea mediei scorurilor
+#     avg_mse = np.mean(mse_scores)
+#     avg_mae = np.mean(mae_scores)
+#
+#     return avg_mse, avg_mae
+#
+# # Apelarea funcției pentru kfold cross validation
+# avg_mse, avg_mae = kfold_cross_validation(X, Y)
+#
+# # Afișarea scorurilor medii
+# print("Average Mean Squared Error (MSE) across folds:", avg_mse)
+# print("Average Mean Absolute Error (MAE) across folds:", avg_mae)
+#
