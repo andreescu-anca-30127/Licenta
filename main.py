@@ -366,7 +366,7 @@ model.add(Dense(9, activation='relu'))
 model.add(Dense(1, activation='linear'))
 
 # Creare optimizator cu o rată de învățare specificată
-optimizer = Adam(learning_rate=0.01)
+optimizer = Adam(learning_rate=0.001)
 
 # Compilarea modelului cu optimizatorul definit
 model.compile(optimizer=optimizer, loss='mse')
