@@ -53,7 +53,7 @@ model = Sequential()
 # Adăugarea straturilor ascunse cu regularizare l1 și Dropout
 model.add(Dense(15, activation='relu', input_dim=29))  # actualizat la numărul de coloane de intrare
 # model.add(Dropout(0.001))
-model.add(Dense(9, activation='relu'))
+model.add(Dense(8, activation='relu'))
 
 # Adăugarea stratului de ieșire
 model.add(Dense(1, activation='linear'))
