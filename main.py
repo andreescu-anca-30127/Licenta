@@ -182,17 +182,13 @@ val_loss2 = istorie.history['val_loss']
 tr_acc2 = istorie.history['accuracy']
 val_acc2 = istorie.history['val_accuracy']
 
-# Determinarea epocii cu cea mai mică pierdere de validare
-index_loss2 = np.argmin(val_loss2)
-val_lowest2 = val_loss2[index_loss2]
-
 # Crearea listei cu epoci
 Epochs = [i + 1 for i in range(len(tr_loss2))]
 
 # Plotarea istoricului pierderii
 plt.figure()
-plt.plot(Epochs, tr_loss2, 'r', label='Training loss')
-plt.plot(Epochs, val_loss2, 'g', label='Validation loss')
+plt.plot(Epochs, tr_loss2, 'blue', label='Training loss')
+plt.plot(Epochs, val_loss2, 'pink', label='Validation loss')
 plt.title('Loss pe antrenare vs validare')
 plt.xlabel('Epoci')
 plt.ylabel('Loss')
@@ -202,9 +198,8 @@ plt.show()
 
 # Plotarea istoricului acurateței
 plt.figure()
-
-plt.plot(Epochs, tr_acc2, 'r', label='Training accuracy')
-plt.plot(Epochs, val_acc2, 'g', label='Validation accuracy')
+plt.plot(Epochs, tr_acc2, 'blue', label='Training accuracy')
+plt.plot(Epochs, val_acc2, 'red', label='Validation accuracy')
 plt.title('Acuratețe pe validare vs antrenare')
 plt.xlabel('Epoci')
 plt.ylabel('Acuratete')
@@ -217,13 +212,14 @@ y_pred2 = model2.predict(x2_test)
 
 # Afișarea graficului valorilor prezise vs. valorilor reale
 plt.figure()
-plt.scatter(range(len(y2_test)), y2_test, color='blue', label='Realitate', alpha=0.5)
-plt.scatter(range(len(y_pred2)), y_pred2, color='green', label='Predicție', alpha=0.5)
+plt.scatter(range(len(y2_test)), y2_test, color='yellow', label='Realitate')
+plt.scatter(range(len(y_pred2)), y_pred2, color='red', label='Predicție')
 plt.xlabel('Sample')
 plt.ylabel('Rezultat')
 plt.title('Realitate vs Predicție')
 plt.legend()
 plt.show()
+
 #metrici utilizate
 # Calcularea scorului R2
 R2_clasificare = r2_score(y2_test, y_pred2)
