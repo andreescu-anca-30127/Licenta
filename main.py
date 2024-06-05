@@ -17,95 +17,95 @@ from sklearn.preprocessing import StandardScaler
 # Citirea datelor
 dataset = pd.read_csv("C:\\Users\\Admin\\Desktop\\skolika\\data.csv")
 
-# # Afișarea primelor 5 rânduri ale dataset-ului
-# print(dataset.head())
-# print(dataset.info())
-# print(dataset.describe())
-# output = dataset[['area_mean']].values
+# Afișarea primelor 5 rânduri ale dataset-ului
+print(dataset.head())
+print(dataset.info())
+print(dataset.describe())
+output = dataset[['area_mean']].values
 #
-# # Eliminarea coloanelor 'area_mean', 'id', și 'diagnosis' din input
-# input = dataset.drop(columns=['area_mean', 'id', 'diagnosis']).values
+# Eliminarea coloanelor 'area_mean', 'id', și 'diagnosis' din input
+input = dataset.drop(columns=['area_mean', 'id', 'diagnosis']).values
+
+# Afișarea descrierii pentru input
+input_dataset = pd.DataFrame(input)
+print(input_dataset.info())
+print(input_dataset.describe())
 #
-# # Afișarea descrierii pentru input
-# input_dataset = pd.DataFrame(input)
-# print(input_dataset.info())
-# print(input_dataset.describe())
+# Separarea datelor în seturi de antrenare și de test
+X_train, X_test, Y_train, Y_test = train_test_split(input, output, test_size=0.2, random_state=42)
 #
-# # Separarea datelor în seturi de antrenare și de test
-# X_train, X_test, Y_train, Y_test = train_test_split(input, output, test_size=0.2, random_state=42)
+# Reshape output
+Y_train = Y_train.reshape(-1, 1)
+Y_test = Y_test.reshape(-1, 1)
 #
-# # Reshape output
-# Y_train = Y_train.reshape(-1, 1)
-# Y_test = Y_test.reshape(-1, 1)
+# Normalizarea caracteristicilor de intrare
+sc_X = MinMaxScaler()
+X_train = sc_X.fit_transform(X_train)
+X_test = sc_X.transform(X_test)
 #
-# # Normalizarea caracteristicilor de intrare
-# sc_X = MinMaxScaler()
-# X_train = sc_X.fit_transform(X_train)
-# X_test = sc_X.transform(X_test)
+# Normalizarea caracteristicilor de ieșire
+sc_Y = MinMaxScaler()
+Y_train = sc_Y.fit_transform(Y_train)
+Y_test = sc_Y.transform(Y_test)
 #
-# # Normalizarea caracteristicilor de ieșire
-# sc_Y = MinMaxScaler()
-# Y_train = sc_Y.fit_transform(Y_train)
-# Y_test = sc_Y.transform(Y_test)
-#
-# # Definirea modelului
-# model = Sequential()
-#
-# # Adăugarea straturilor ascunse cu regularizare l1 și Dropout
-# model.add(Dense(15, activation='relu', input_dim=29))  # actualizat la numărul de coloane de intrare
-# # model.add(Dropout(0.001))
-# model.add(Dense(8, activation='relu'))
-#
-# # Adăugarea stratului de ieșire
-# model.add(Dense(1, activation='linear'))
-#
-# # Creare optimizator cu o rată de învățare specificată
-# optimizer = Adam(learning_rate=0.001)
-#
-# # Compilarea modelului cu optimizatorul definit
-# model.compile(optimizer=optimizer, loss='mse')
-#
-# # Sumarul modelului
-# model.summary()
-#
-# # Antrenarea modelului
-# history = model.fit(X_train, Y_train, epochs=200, validation_split=0.2)
-#
-# # Predicții și evaluare
-# yhat = model.predict(X_test)
-#
-# # Calcularea și afișarea MSE
-# mse = mean_squared_error(Y_test, yhat)
-# print(f"Mean Squared Error (MSE): {mse}")
-#
-# # Plotarea istoricului pierderii
-# plt.plot(history.history['loss'], label='train')
-# plt.plot(history.history['val_loss'], label='validation')
-# plt.title('Model Loss')
-# plt.ylabel('Loss')
-# plt.xlabel('Epoch')
-# plt.legend()
-# plt.show()
-#
-# # Evaluarea vizuală a predicțiilor
-# plt.plot(Y_test, 'red', label='Real Output')
-# plt.plot(yhat, 'green', label='Predicted Output')
-# plt.title('Model Evaluation')
-# plt.xlabel('Number of samples')
-# plt.ylabel('Measured value')
-# plt.legend()
-# plt.show()
-#
-# # Calcularea erorilor
-# mse_value = np.mean(np.square(np.subtract(Y_test, yhat)))
-# mae_value = np.min(np.square(np.subtract(Y_test, yhat)))
-#
-# print("Mean Squared Error (MSE):", mse_value)
-# print("Minimal Error (MAE):", mae_value)
-# mse = mean_squared_error(Y_test, yhat)
-# r2 = r2_score(Y_test, yhat)
-# print(f"Mean Squared Error (MSE): {mse}")
-# print(f"R-squared (R²): {r2}")
+# Definirea modelului
+model = Sequential()
+
+# Adăugarea straturilor ascunse cu regularizare l1 și Dropout
+model.add(Dense(15, activation='relu', input_dim=29))  # actualizat la numărul de coloane de intrare
+# model.add(Dropout(0.001))
+model.add(Dense(8, activation='relu'))
+
+# Adăugarea stratului de ieșire
+model.add(Dense(1, activation='linear'))
+
+# Creare optimizator cu o rată de învățare specificată
+optimizer_arie = Adam(learning_rate=0.001)
+
+# Compilarea modelului cu optimizatorul definit
+model.compile(optimizer=optimizer_arie, loss='mse')
+
+# Sumarul modelului
+model.summary()
+
+# Antrenarea modelului
+history = model.fit(X_train, Y_train, epochs=200, validation_split=0.2)
+
+# Predicții și evaluare
+yhat = model.predict(X_test)
+
+# Calcularea și afișarea MSE
+mse = mean_squared_error(Y_test, yhat)
+print(f"Mean Squared Error (MSE): {mse}")
+
+# Plotarea istoricului pierderii
+plt.plot(history.history['loss'], label='train')
+plt.plot(history.history['val_loss'], label='validation')
+plt.title('Model Loss')
+plt.ylabel('Loss')
+plt.xlabel('Epoch')
+plt.legend()
+plt.show()
+
+# Evaluarea vizuală a predicțiilor
+plt.plot(Y_test, 'red', label='Real Output')
+plt.plot(yhat, 'green', label='Predicted Output')
+plt.title('Model Evaluation')
+plt.xlabel('Number of samples')
+plt.ylabel('Measured value')
+plt.legend()
+plt.show()
+
+# Calcularea erorilor
+mse_value = np.mean(np.square(np.subtract(Y_test, yhat)))
+mae_value = np.min(np.square(np.subtract(Y_test, yhat)))
+
+print("Mean Squared Error (MSE):", mse_value)
+print("Minimal Error (MAE):", mae_value)
+mse = mean_squared_error(Y_test, yhat)
+r2 = r2_score(Y_test, yhat)
+print(f"Mean Squared Error (MSE): {mse}")
+print(f"R-squared (R²): {r2}")
 
 
 
@@ -164,10 +164,10 @@ def clasiificare(x2_train, y2_train, input_dim=30, epochs=200, validation_split=
     model2.add(Dense(15, activation='relu', input_dim=input_dim))
     model2.add(Dense(8, activation='relu'))
     model2.add(Dense(1, activation='sigmoid'))
-    optimizer = Adam(learning_rate=0.001)
+    optimizer_clasificare = Adam(learning_rate=0.001)
 
     # Compilarea modelului
-    model2.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['accuracy'])
+    model2.compile(optimizer=optimizer_clasificare, loss='binary_crossentropy', metrics=['accuracy'])
     model2.summary()
 
     # Antrenarea modelului
