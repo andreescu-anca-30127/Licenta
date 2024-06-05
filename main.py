@@ -13,22 +13,23 @@ from tensorflow.keras.optimizers import Adam, RMSprop
 from sklearn.preprocessing import RobustScaler
 from sklearn.metrics import mean_squared_error
 # # # model cu mai multe date pentru clasificare
+from sklearn.preprocessing import StandardScaler
 # Citirea datelor
-df = pd.read_csv("C:\\Users\\Admin\\Desktop\\skolika\\data.csv")
+dataset = pd.read_csv("C:\\Users\\Admin\\Desktop\\skolika\\data.csv")
 
 # # Afișarea primelor 5 rânduri ale dataset-ului
-# print(df.head())
-# print(df.info())
-# print(df.describe())
-# output = df[['area_mean']].values
+# print(dataset.head())
+# print(dataset.info())
+# print(dataset.describe())
+# output = dataset[['area_mean']].values
 #
 # # Eliminarea coloanelor 'area_mean', 'id', și 'diagnosis' din input
-# input = df.drop(columns=['area_mean', 'id', 'diagnosis']).values
+# input = dataset.drop(columns=['area_mean', 'id', 'diagnosis']).values
 #
 # # Afișarea descrierii pentru input
-# input_df = pd.DataFrame(input)
-# print(input_df.info())
-# print(input_df.describe())
+# input_dataset = pd.DataFrame(input)
+# print(input_dataset.info())
+# print(input_dataset.describe())
 #
 # # Separarea datelor în seturi de antrenare și de test
 # X_train, X_test, Y_train, Y_test = train_test_split(input, output, test_size=0.2, random_state=42)
@@ -110,51 +111,70 @@ df = pd.read_csv("C:\\Users\\Admin\\Desktop\\skolika\\data.csv")
 
 
 # Distribuția clasei 'diagnosis'
-counts = df['diagnosis'].value_counts()
+counts = dataset['diagnosis'].value_counts()
 print(counts)
 
 # Codificarea etichetelor
-le = LabelEncoder()
-df["diagnosis"] = le.fit_transform(df["diagnosis"])
+etichete = LabelEncoder()
+dataset["diagnosis"] = etichete.fit_transform(dataset["diagnosis"])
 
 # Vizualizarea distribuției claselor
-plt.figure(figsize=(20, 6))
 explode = (0, 0.05)
-counts.plot(kind='pie', fontsize=12, explode=explode, autopct='%.1f%%')
-plt.title('Diagnosis')
-plt.xlabel('Diagnosis', weight="bold", color="#000000", fontsize=14, labelpad=20)
-plt.ylabel('Counts', weight="bold", color="#000000", fontsize=14, labelpad=20)
-plt.legend(labels=counts.index, loc="best")
+counts = pd.Series({'M': 212, 'B': 357})
+
+# roz si portocaliu
+colors = ['#FF69B4', '#FFA500']
+# Crearea plotului
+plt.figure(figsize=(20,17))
+counts.plot(kind='pie', fontsize=12, explode=explode, autopct='%.1f%%', colors=colors)
+plt.title('Diagramă pentru clasificarea tipului tumorii')
+plt.xlabel('Diagnostic', weight="bold", color="#FF69B4", fontsize=10, labelpad=14)
+plt.ylabel('Cazuri', weight="bold", color="#FFA500", fontsize=10, labelpad=14)
+
+# Adăugarea informației în legenda
+plt.legend(labels=[f'{label} ({count})' for label, count in counts.items()], loc="best")
+
+# Afișarea plotului
 plt.show()
 
-# Eliminarea coloanei 'id'
-df.drop(columns=["id"], inplace=True)
+# se elimna coloana de id din setul de date
+dataset.drop(columns=["id"], inplace= True)
 
-# Separarea datelor de intrare și ieșire
-x2 = df.drop(columns=["diagnosis"])
-y2 = df["diagnosis"]
+# Definirea intrarilor si iesirilor
+#din intrare am taiat coloana cu diagnostic
+x2 = dataset.drop(columns=["diagnosis"])
+y2 = dataset["diagnosis"]
 
+#preprocesare
 # Normalizarea datelor de intrare
 scaler = MinMaxScaler()
 x2 = scaler.fit_transform(x2)
 
+# Standardizarea datelor de intrare
+# scaler = StandardScaler()
+# x2= scaler.fit_transform(x2)
+
+
 # Împărțirea datelor în seturi de antrenament și de testare
 x2_train, x2_test, y2_train, y2_test = train_test_split(x2, y2, test_size=0.2, random_state=42)
 
-# Definirea modelului Sequential
-model2 = Sequential()
-model2.add(Dense(15, activation='relu', input_dim=30))
-model2.add(Dense(8, activation='relu'))
-model2.add(Dense(1, activation='sigmoid'))
 
-# Compilarea modelului
-model2.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+def clasiificare(x2_train, y2_train, input_dim=30, epochs=200, validation_split=0.2):
+    model2 = Sequential()
+    model2.add(Dense(15, activation='relu', input_dim=input_dim))
+    model2.add(Dense(8, activation='relu'))
+    model2.add(Dense(1, activation='sigmoid'))
+    optimizer = Adam(learning_rate=0.001)
 
-# Afișarea sumarului modelului
-model2.summary()
+    # Compilarea modelului
+    model2.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['accuracy'])
+    model2.summary()
 
-# Antrenarea modelului
-istorie = model2.fit(x2_train, y2_train, epochs=200, validation_split=0.2)
+    # Antrenarea modelului
+    istorie = model2.fit(x2_train, y2_train, epochs=epochs, validation_split=validation_split)
+    return model2, istorie
+
+model2, istorie = clasiificare(x2_train, y2_train, input_dim=30, epochs=200, validation_split=0.2)
 
 # Afișarea istoriei pierderii și acurateței
 tr_loss2 = istorie.history['loss']
@@ -168,48 +188,46 @@ val_lowest2 = val_loss2[index_loss2]
 
 # Crearea listei cu epoci
 Epochs = [i + 1 for i in range(len(tr_loss2))]
-loss_label = f'best epoch= {str(index_loss2 + 1)}'
 
 # Plotarea istoricului pierderii
-plt.figure(figsize=(20, 8))
-plt.style.use('fivethirtyeight')
+plt.figure()
 plt.plot(Epochs, tr_loss2, 'r', label='Training loss')
 plt.plot(Epochs, val_loss2, 'g', label='Validation loss')
-plt.scatter(index_loss2 + 1, val_lowest2, s=150, c='blue', label=loss_label)
-plt.title('Training and Validation Loss')
-plt.xlabel('Epochs')
+plt.title('Loss pe antrenare vs validare')
+plt.xlabel('Epoci')
 plt.ylabel('Loss')
 plt.legend()
-plt.tight_layout()
+plt.grid(False)  # Elimină gridul
 plt.show()
 
 # Plotarea istoricului acurateței
-plt.figure(figsize=(20, 8))
-plt.style.use('fivethirtyeight')
+plt.figure()
+
 plt.plot(Epochs, tr_acc2, 'r', label='Training accuracy')
 plt.plot(Epochs, val_acc2, 'g', label='Validation accuracy')
-plt.title('Training and Validation Accuracy')
-plt.xlabel('Epochs')
-plt.ylabel('Accuracy')
+plt.title('Acuratețe pe validare vs antrenare')
+plt.xlabel('Epoci')
+plt.ylabel('Acuratete')
 plt.legend()
-plt.tight_layout()
+plt.grid(False)  # Elimină gridul
 plt.show()
 
 # Predicții pe setul de testare
 y_pred2 = model2.predict(x2_test)
 
 # Afișarea graficului valorilor prezise vs. valorilor reale
-plt.figure(figsize=(10, 6))
-plt.scatter(range(len(y2_test)), y2_test, color='red', label='Actual', alpha=0.5)
-plt.scatter(range(len(y_pred2)), y_pred2, color='blue', label='Predicted', alpha=0.5)
+plt.figure()
+plt.scatter(range(len(y2_test)), y2_test, color='blue', label='Realitate', alpha=0.5)
+plt.scatter(range(len(y_pred2)), y_pred2, color='green', label='Predicție', alpha=0.5)
 plt.xlabel('Sample')
-plt.ylabel('Outcome')
-plt.title('Actual vs Predicted')
+plt.ylabel('Rezultat')
+plt.title('Realitate vs Predicție')
 plt.legend()
 plt.show()
+#metrici utilizate
 # Calcularea scorului R2
-R2 = r2_score(y2_test, y_pred2)
-print("R2 Score =", R2)
+R2_clasificare = r2_score(y2_test, y_pred2)
+print("R2 Score =", R2_clasificare)
 # Evaluarea acuratetii modelului pe setul de testare
 test_loss, test_accuracy = model2.evaluate(x2_test, y2_test)
-print("Test Accuracy:", test_accuracy)
+print("Acuratetea pe testare:", test_accuracy)
