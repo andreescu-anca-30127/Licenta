@@ -14,6 +14,8 @@ from sklearn.preprocessing import RobustScaler
 from sklearn.metrics import mean_squared_error
 # # # model cu mai multe date pentru clasificare
 from sklearn.preprocessing import StandardScaler
+
+
 # Citirea datelor
 dataset = pd.read_csv("C:\\Users\\Admin\\Desktop\\skolika\\data.csv")
 
@@ -21,6 +23,7 @@ dataset = pd.read_csv("C:\\Users\\Admin\\Desktop\\skolika\\data.csv")
 print(dataset.head())
 print(dataset.info())
 print(dataset.describe())
+# ARIA TUMORII
 output = dataset[['area_mean']].values
 #
 # Eliminarea coloanelor 'area_mean', 'id', și 'diagnosis' din input
@@ -42,12 +45,29 @@ Y_test = Y_test.reshape(-1, 1)
 sc_X = MinMaxScaler()
 X_train = sc_X.fit_transform(X_train)
 X_test = sc_X.transform(X_test)
-#
 # Normalizarea caracteristicilor de ieșire
 sc_Y = MinMaxScaler()
 Y_train = sc_Y.fit_transform(Y_train)
 Y_test = sc_Y.transform(Y_test)
-#
+
+#Standarzidare
+# sc_X = StandardScaler()
+# X_train = sc_X.fit_transform(X_train)
+# X_test = sc_X.transform(X_test)
+# # Normalizarea caracteristicilor de ieșire
+# sc_Y = StandardScaler()
+# Y_train = sc_Y.fit_transform(Y_train)
+# Y_test = sc_Y.transform(Y_test)
+
+#robust scaller
+# sc_X = RobustScaler()
+# X_train = sc_X.fit_transform(X_train)
+# X_test = sc_X.transform(X_test)
+# # Normalizarea caracteristicilor de ieșire
+# sc_Y = RobustScaler()
+# Y_train = sc_Y.fit_transform(Y_train)
+# Y_test = sc_Y.transform(Y_test)
+
 # Definirea modelului
 model = Sequential()
 
@@ -76,21 +96,21 @@ yhat = model.predict(X_test)
 
 # Calcularea și afișarea MSE
 mse = mean_squared_error(Y_test, yhat)
-print(f"Mean Squared Error (MSE): {mse}")
+print(f"Eroarea medie patratica (MSE): {mse}")
 
 # Plotarea istoricului pierderii
 plt.plot(history.history['loss'], label='train')
 plt.plot(history.history['val_loss'], label='validation')
 plt.title('Model Loss')
 plt.ylabel('Loss')
-plt.xlabel('Epoch')
+plt.xlabel('Epoci')
 plt.legend()
 plt.show()
 
 # Evaluarea vizuală a predicțiilor
-plt.plot(Y_test, 'red', label='Real Output')
-plt.plot(yhat, 'green', label='Predicted Output')
-plt.title('Model Evaluation')
+plt.plot(Y_test, 'red', label='Realitatea')
+plt.plot(yhat, 'green', label='Predictia')
+plt.title('Evaluarea modelului pentru aria tumorii')
 plt.xlabel('Number of samples')
 plt.ylabel('Measured value')
 plt.legend()
@@ -107,7 +127,7 @@ r2 = r2_score(Y_test, yhat)
 print(f"Mean Squared Error (MSE): {mse}")
 print(f"R-squared (R²): {r2}")
 
-
+#CLASIFICARE
 
 
 # Distribuția clasei 'diagnosis'
