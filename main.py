@@ -125,11 +125,11 @@ counts = pd.Series({'M': 212, 'B': 357})
 # roz si portocaliu
 colors = ['#FF69B4', '#FFA500']
 # Crearea plotului
-plt.figure(figsize=(20,17))
+plt.figure(figsize=(8,8))
 counts.plot(kind='pie', fontsize=12, explode=explode, autopct='%.1f%%', colors=colors)
 plt.title('Diagramă pentru clasificarea tipului tumorii')
-plt.xlabel('Diagnostic', weight="bold", color="#FF69B4", fontsize=10, labelpad=14)
-plt.ylabel('Cazuri', weight="bold", color="#FFA500", fontsize=10, labelpad=14)
+plt.xlabel('Diagnostic', fontsize=10)
+plt.ylabel('Cazuri', fontsize=10)
 
 # Adăugarea informației în legenda
 plt.legend(labels=[f'{label} ({count})' for label, count in counts.items()], loc="best")
@@ -147,8 +147,8 @@ y2 = dataset["diagnosis"]
 
 #preprocesare
 # Normalizarea datelor de intrare
-scaler = MinMaxScaler()
-x2 = scaler.fit_transform(x2)
+scalernormalizare = MinMaxScaler()
+x2 = scalernormalizare.fit_transform(x2)
 
 # Standardizarea datelor de intrare
 # scaler = StandardScaler()
