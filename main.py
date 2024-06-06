@@ -40,7 +40,7 @@ X_train, X_test, Y_train, Y_test = train_test_split(input, output, test_size=0.2
 # Reshape output
 Y_train = Y_train.reshape(-1, 1)
 Y_test = Y_test.reshape(-1, 1)
-#
+from sklearn.preprocessing import MinMaxScaler, LabelEncoder
 # Normalizarea caracteristicilor de intrare
 sc_X = MinMaxScaler()
 X_train = sc_X.fit_transform(X_train)
@@ -68,30 +68,21 @@ Y_test = sc_Y.transform(Y_test)
 # Y_train = sc_Y.fit_transform(Y_train)
 # Y_test = sc_Y.transform(Y_test)
 
+#  crearea modelului pentru predictia ariei
 # Definirea modelului
 model = Sequential()
-
-# Adăugarea straturilor ascunse cu regularizare l1 și Dropout
-model.add(Dense(15, activation='relu', input_dim=29))  # actualizat la numărul de coloane de intrare
+model.add(Dense(15, activation='relu', input_dim=29))
 # model.add(Dropout(0.001))
 model.add(Dense(8, activation='relu'))
-
-# Adăugarea stratului de ieșire
-model.add(Dense(1, activation='linear'))
-
+model.add(Dense(1, activation='linear'))#strat iesire
 # Creare optimizator cu o rată de învățare specificată
 optimizer_arie = Adam(learning_rate=0.001)
-
 # Compilarea modelului cu optimizatorul definit
 model.compile(optimizer=optimizer_arie, loss='mse')
-
-# Sumarul modelului
 model.summary()
-
-# Antrenarea modelului
 history = model.fit(X_train, Y_train, epochs=200, validation_split=0.2)
 
-# Predicții și evaluare
+# Predicții
 yhat = model.predict(X_test)
 
 # Calcularea și afișarea MSE
