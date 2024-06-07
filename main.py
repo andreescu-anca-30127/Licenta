@@ -110,13 +110,10 @@ plt.show()
 # Calcularea erorilor
 mse_value = np.mean(np.square(np.subtract(Y_test, yhat)))
 mae_value = np.min(np.square(np.subtract(Y_test, yhat)))
-
-print("Mean Squared Error (MSE):", mse_value)
-print("Minimal Error (MAE):", mae_value)
-mse = mean_squared_error(Y_test, yhat)
 r2 = r2_score(Y_test, yhat)
-print(f"Mean Squared Error (MSE): {mse}")
-print(f"R-squared (R²): {r2}")
+print("Eroarea medie patratica (MSE):", mse_value)
+print("Eroarea minima (MAE):", mae_value)
+print("Coeficinetul de determinare (R²):", r2)
 
 #CLASIFICARE
 
