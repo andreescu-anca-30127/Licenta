@@ -10,6 +10,7 @@ from tensorflow.keras.metrics import Precision, Recall, AUC
 from sklearn.metrics import r2_score
 from ucimlrepo import fetch_ucirepo
 from tensorflow.keras.optimizers import Adam, RMSprop
+import tensorflow as tf
 from sklearn.preprocessing import RobustScaler
 from sklearn.metrics import mean_squared_error
 # # # model cu mai multe date pentru clasificare
@@ -18,7 +19,7 @@ from sklearn.preprocessing import StandardScaler
 #
 # # Citirea datelor
 dataset = pd.read_csv("C:\\Users\\Admin\\Desktop\\skolika\\data.csv")
-# Afișarea primelor 5 rânduri ale dataset-ului
+# # Afișarea primelor 5 rânduri ale dataset-ului
 # print(dataset.head())
 # print(dataset.describe())
 # # ARIA TUMORII
@@ -86,7 +87,7 @@ dataset = pd.read_csv("C:\\Users\\Admin\\Desktop\\skolika\\data.csv")
 # # Compilarea modelului cu optimizatorul definit
 # model.compile(optimizer=optimizer_arie, loss='mse')
 # model.summary()
-# history = model.fit(X_train, Y_train, epochs=300, validation_split=0.2)
+# history = model.fit(X_train, Y_train, epochs=200, validation_split=0.2)
 #
 # # Predicții
 # yhat = model.predict(X_test)
@@ -165,8 +166,8 @@ x2_train, x2_test, y2_train, y2_test = train_test_split(x2, y2, test_size=0.2, r
 
 def clasiificare(x2_train, y2_train, input_dim=30, epochs=200, validation_split=0.2):
     model2 = Sequential()
-    model2.add(Dense(15, input_dim=input_dim))
-    model2.add(LeakyReLU(alpha=0.1))
+    model2.add(Dense(15,  activation='relu',input_dim=input_dim))
+    # model2.add(LeakyReLU(alpha=0.1))
     model2.add(Dense(8, activation='relu'))
     model2.add(Dense(1, activation='sigmoid'))
     optimizer_clasificare = Adam(learning_rate=0.001)
