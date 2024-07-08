@@ -19,104 +19,105 @@ from sklearn.preprocessing import StandardScaler
 #
 # # Citirea datelor
 dataset = pd.read_csv("C:\\Users\\Admin\\Desktop\\skolika\\data.csv")
-# # Afișarea primelor 5 rânduri ale dataset-ului
-# print(dataset.head())
-# print(dataset.describe())
-# # ARIA TUMORII
-# output = dataset[['area_mean']].values
-# #
-# # Eliminarea coloanelor 'area_mean', 'id', și 'diagnosis' din input
-# input = dataset.drop(columns=['area_mean', 'id', 'diagnosis']).values
+# Afișarea primelor 5 rânduri ale dataset-ului
+print(dataset.head())
+print(dataset.describe())
+# ARIA TUMORII
+output = dataset[['area_mean']].values
 #
-# # Afișarea descrierii pentru input
-# input_dataset = pd.DataFrame(input)
-# print(input_dataset.info())
-# print(input_dataset.describe())
-# #
-# # Separarea datelor în seturi de antrenare și de test
-# X_train, X_test, Y_train, Y_test = train_test_split(input, output, test_size=0.2, random_state=42)
-# #
-# # Reshape output
-# Y_train = Y_train.reshape(-1, 1)
-# Y_test = Y_test.reshape(-1, 1)
+# Eliminarea coloanelor 'area_mean', 'id', și 'diagnosis' din input
+input = dataset.drop(columns=['area_mean', 'id', 'diagnosis']).values
+
+# Afișarea descrierii pentru input
+input_dataset = pd.DataFrame(input)
+print(input_dataset.info())
+print(input_dataset.describe())
 #
-# from sklearn.preprocessing import MinMaxScaler, LabelEncoder
-# # # Normalizarea caracteristicilor de intrare
-# sc_X = MinMaxScaler()
+# Separarea datelor în seturi de antrenare și de test
+X_train, X_test, Y_train, Y_test = train_test_split(input, output, test_size=0.2, random_state=42)
+#
+# Reshape output
+Y_train = Y_train.reshape(-1, 1)
+Y_test = Y_test.reshape(-1, 1)
+
+from sklearn.preprocessing import MinMaxScaler, LabelEncoder
+# # Normalizarea caracteristicilor de intrare
+sc_X = MinMaxScaler()
+X_train = sc_X.fit_transform(X_train)
+X_test = sc_X.transform(X_test)
+# Normalizarea caracteristicilor de ieșire
+sc_Y = MinMaxScaler()
+Y_train = sc_Y.fit_transform(Y_train)
+Y_test = sc_Y.transform(Y_test)
+#
+# Standarzidare
+# sc_X = StandardScaler()
 # X_train = sc_X.fit_transform(X_train)
 # X_test = sc_X.transform(X_test)
 # # Normalizarea caracteristicilor de ieșire
-# sc_Y = MinMaxScaler()
+# sc_Y = StandardScaler()
 # Y_train = sc_Y.fit_transform(Y_train)
 # Y_test = sc_Y.transform(Y_test)
-# #
-# # Standarzidare
-# # sc_X = StandardScaler()
-# # X_train = sc_X.fit_transform(X_train)
-# # X_test = sc_X.transform(X_test)
-# # # Normalizarea caracteristicilor de ieșire
-# # sc_Y = StandardScaler()
-# # Y_train = sc_Y.fit_transform(Y_train)
-# # Y_test = sc_Y.transform(Y_test)
-#
-# #robust scaller
-# # sc_X = RobustScaler()
-# # X_train = sc_X.fit_transform(X_train)
-# # X_test = sc_X.transform(X_test)
-# # # Normalizarea caracteristicilor de ieșire
-# # sc_Y = RobustScaler()
-# # Y_train = sc_Y.fit_transform(Y_train)
-# # Y_test = sc_Y.transform(Y_test)
-#
-# #  crearea modelului pentru predictia ariei
-# # Definirea modelului
-# model = Sequential()
-# # model.add(Dense(15, activation='relu', input_dim=29))
-# model.add(Dense(15, input_dim=29))
+
+#robust scaller
+# sc_X = RobustScaler()
+# X_train = sc_X.fit_transform(X_train)
+# X_test = sc_X.transform(X_test)
+# # Normalizarea caracteristicilor de ieșire
+# sc_Y = RobustScaler()
+# Y_train = sc_Y.fit_transform(Y_train)
+# Y_test = sc_Y.transform(Y_test)
+
+#  crearea modelului pentru predictia ariei
+# Definirea modelului
+model = Sequential()
+# model.add(Dense(15, activation='relu', input_dim=29))
+model.add(Dense(15, input_dim=29))
+model.add(LeakyReLU(alpha=0.1))
+# model.add(Dropout(0.001))
+# model.add(Dense(8, activation='relu'))
+model.add(Dense(8))
+model.add(LeakyReLU(alpha=0.1))
+model.add(Dense(1, activation='linear'))#strat iesire
+# model.add(Dense(1))#strat iesire
 # model.add(LeakyReLU(alpha=0.1))
-# # model.add(Dropout(0.001))
-# # model.add(Dense(8, activation='relu'))
-# model.add(Dense(8))
-# model.add(LeakyReLU(alpha=0.1))
-# model.add(Dense(1, activation='linear'))#strat iesire
-# # model.add(Dense(1))#strat iesire
-# # model.add(LeakyReLU(alpha=0.1))
-#
-# # Creare optimizator cu o rată de învățare specificată
-# optimizer_arie = Adam(learning_rate=0.001)
-# # Compilarea modelului cu optimizatorul definit
-# model.compile(optimizer=optimizer_arie, loss='mse')
-# model.summary()
-# history = model.fit(X_train, Y_train, epochs=200, validation_split=0.2)
-#
-# # Predicții
-# yhat = model.predict(X_test)
-#
-# # Plotarea istoricului pierderii
-# plt.plot(history.history['loss'], label='train')
-# plt.plot(history.history['val_loss'], label='validation')
-# plt.title('Model Loss')
-# plt.ylabel('Loss')
-# plt.xlabel('Epoci')
-# plt.legend()
-# plt.show()
-#
-# # Evaluarea vizuală a predicțiilor
-# plt.plot(Y_test, 'red', label='Realitatea')
-# plt.plot(yhat, 'green', label='Predictia')
-# plt.title('Evaluarea modelului pentru aria tumorii')
-# plt.xlabel('Number of samples')
-# plt.ylabel('Measured value')
-# plt.legend()
-# plt.show()
-#
-# # Calcularea erorilor
-# mse_value = np.mean(np.square(np.subtract(Y_test, yhat)))
-# mae_value = np.min(np.square(np.subtract(Y_test, yhat)))
-# r2 = r2_score(Y_test, yhat)
-# print("Eroarea medie patratica (MSE):", mse_value)
-# print("Eroarea minima (MAE):", mae_value)
-# print("Coeficinetul de determinare (R²):", r2)
+
+# Creare optimizator cu o rată de învățare specificată
+optimizer_arie = Adam(learning_rate=0.001)
+# Compilarea modelului cu optimizatorul definit
+model.compile(optimizer=optimizer_arie, loss='mse')
+model.summary()
+history = model.fit(X_train, Y_train, epochs=200, validation_split=0.2)
+
+# Predicții
+yhat = model.predict(X_test)
+
+# Plotarea istoricului pierderii
+plt.plot(history.history['loss'], label='train')
+plt.plot(history.history['val_loss'], label='validation')
+plt.title('Model Loss')
+plt.ylabel('Loss')
+plt.xlabel('Epoci')
+plt.legend()
+plt.show()
+
+# Evaluarea vizuală a predicțiilor
+plt.plot(Y_test, 'red', label='Realitatea')
+plt.plot(yhat, 'green', label='Predictia')
+plt.title('Evaluarea modelului pentru aria tumorii')
+plt.xlabel('Number of samples')
+plt.ylabel('Measured value')
+plt.legend()
+plt.show()
+
+# Calcularea erorilor
+mse_value = np.mean(np.square(np.subtract(Y_test, yhat)))
+mae_value = np.min(np.square(np.subtract(Y_test, yhat)))
+r2 = r2_score(Y_test, yhat)
+print("Eroarea medie patratica (MSE) pentru regresie:", mse_value)
+print("Eroarea minima (MAE) pentru regresie:", mae_value)
+print("Coeficinetul de determinare (R²) pentru regresie:", r2)
+
 
 #CLASIFICARE
 
@@ -129,21 +130,6 @@ print(counts)
 etichete = LabelEncoder()
 dataset["diagnosis"] = etichete.fit_transform(dataset["diagnosis"])
 
-# Vizualizarea distribuției claselor
-explode = (0, 0.05)
-
-
-# roz si portocaliu
-# colors = ['#FF69B4', '#FFA500']
-# # Crearea plotului
-# plt.figure(figsize=(8,8))
-# counts.plot(kind='pie', fontsize=12, explode=explode, autopct='%.1f%%', colors=colors)
-# plt.title('Diagramă pentru clasificarea tipului tumorii')
-# plt.xlabel('Diagnostic', fontsize=10)
-# plt.ylabel('Cazuri', fontsize=10)
-# # Adăugarea informației în legenda
-# plt.legend(labels=[f'{label} ({count})' for label, count in counts.items()], loc="best")
-# plt.show()
 
 # Definirea intrarilor si iesirilor
 #din intrare am taiat coloana cu diagnostic și de id
